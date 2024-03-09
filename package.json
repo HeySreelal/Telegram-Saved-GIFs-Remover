@@ -1,0 +1,16 @@
+{
+  "name": "removegifs",
+  "version": "1.0.0",
+  "description": "Telegram gives you option to clear all recent emojis and stickers but never GIFs! Well, we have it now.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "input": "^1.0.1",
+    "telegram": "^2.19.20"
+  }
+}

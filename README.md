@@ -2,7 +2,7 @@
 
 ![GitHub license](https://img.shields.io/github/license/HeySreelal/Saved-GIFs-Remover.svg?style=flat-square)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/HeySreelal/Saved-GIFs-Remover.svg?style=flat-square)
-![Node.js Version](https://img.shields.io/node/v/Saved-GIFs-Remover.svg?style=flat-square&logo=node.js)
+![Node.js Version](https://img.shields.io/badge/node-v20.11.0-green?style=flat-square&logo=node.js)
 ![Telegram API](https://img.shields.io/badge/Telegram%20API-%F0%9F%92%AC-blue.svg?style=flat-square&logo=telegram)
 
 ## Overview

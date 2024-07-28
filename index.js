@@ -19,9 +19,19 @@ const client = new TelegramClient(stringSession, apiId, apiHash, {
         onError: (err) => console.log(err),
     });
 
+    console.log(client.session.save())
+
     const gifs = await client.invoke(new Api.messages.GetSavedGifs({}));
-    console.log(`Found ${gifs.gifs.length} saved GIFs`);
-    for (const gif of gifs.gifs) {
+
+    const len = gifs.gifs.length;
+    console.log(`Found ${len} saved GIFs`);
+
+    console.log(`🛸 Starting the removal loop.`);
+
+    for (let i = 0; i < len; i++) {
+        // Type: TypeDocument
+        const gif = gifs.gifs[i];
+
         const api = new Api.messages.SaveGif({
             unsave: true,
             id: gif,
@@ -29,11 +39,17 @@ const client = new TelegramClient(stringSession, apiId, apiHash, {
 
         try {
             await client.invoke(api);
+            console.info(`ℹ️ Removed ${i + 1}/${len}:  ${gif.id}`);
+            await sleep(500);
         } catch (error) {
-            console.error(`Failed to remove GIF ${id}`);
+            console.error(`Failed to remove GIF ${gif.id}`);
             console.error(error);
         }
     }
     console.log("Done, disconnecting now.");
     client.disconnect();
 })();
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}

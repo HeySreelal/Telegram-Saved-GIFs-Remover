@@ -2,25 +2,47 @@ const { TelegramClient, Api } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 const input = require("input");
 
-const apiId = "<YOUR_API_ID>";
-const apiHash = "<YOUR_API_HASH>";
-const stringSession = new StringSession("");
-
-const client = new TelegramClient(stringSession, apiId, apiHash, {
-    connectionRetries: 5,
-});
-
 (async () => {
-    await client.start({
-        phoneNumber: async () => await input.text("📞 Please enter your number: "),
-        password: async () => await input.text("🔑 Please enter your password: "),
-        phoneCode: async () =>
-            await input.text("📲 Please enter the code you received: "),
-        onError: (err) => console.log(err),
+    // Get and validate API ID
+    let apiIdInput = await input.text("📄 Please enter your API ID: ");
+    const apiId = parseInt(apiIdInput, 10);
+    if (isNaN(apiId)) {
+        console.error("❌ Invalid API ID. It should be a number.");
+        process.exit(1); 
+    }
+
+    // Get and validate API Hash
+    const apiHash = await input.text("🔑 Please enter your API Hash: ");
+    if (!apiHash || apiHash.length < 32) {
+        console.error("❌ Invalid API Hash. It should be a valid hash string.");
+        process.exit(1); 
+    }
+
+    // Get string session if available
+    const stringSessionInput = await input.text("🗝️ Do you have a string session key? (Leave empty if not): ");
+    
+    // Use existing or empty session
+    const stringSession = new StringSession(stringSessionInput || ""); 
+    const client = new TelegramClient(stringSession, apiId, apiHash, {
+        connectionRetries: 5,
     });
 
-    console.log("💾 Session saved:");
-    console.log(client.session.save());
+    if (stringSessionInput) {
+        // If string session is provided, connect directly
+        await client.connect();
+        console.log("✅ Connected using the provided string session.");
+    } else {
+        // If no string session, go through login process
+        await client.start({
+            phoneNumber: async () => await input.text("📞 Please enter your phone number: "),
+            password: async () => await input.text("🔐 Please enter your password: "),
+            phoneCode: async () =>
+                await input.text("📲 Please enter the code you received: "),
+            onError: (err) => console.log(err),
+        });
+        console.log("💾 Session saved:");
+        console.log(client.session.save());
+    }
 
     let totalRemoved = 0;
 
@@ -33,7 +55,7 @@ const client = new TelegramClient(stringSession, apiId, apiHash, {
             break;
         }
 
-        console.log(`Found ${len} saved GIFs.\m🛸 Starting the removal loop.`);
+        console.log(`Found ${len} saved GIFs.\n🛸 Starting the removal loop.`);
 
         for (let i = 0; i < len; i++) {
             const gif = gifs.gifs[i];
